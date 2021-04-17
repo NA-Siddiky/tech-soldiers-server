@@ -32,13 +32,37 @@ client.connect(err => {
 
     const usersCollection = client.db("tech-soldiers").collection("users");
 
+
+    app.get('/allusers', (req, res) => {
+        usersCollection.find().toArray((err, items) => {
+            res.send([...items]);
+        });
+    });
+
+    app.get('/makeAdmin/:email', async (req, res) => {
+        const email = req.params.email
+        console.log(email)
+        const data = await usersCollection.updateOne({ "email": email }, { $set: { "role": 'admin' } });
+        res.send({ message: 'update Successfully' })
+    });
+
     app.post('/addUser', (req, res) => {
         const user = req.body;
-        console.log(user)
-        usersCollection.insertOne(user)
-            .then(result => {
-                res.send(result.insertedCount > 0)
-            })
+        const { email } = user;
+        usersCollection.findOne({ email }, (err, data) => {
+            console.log(data, 'from server');
+            if (data) {
+                res.send(data)
+            } else {
+                usersCollection.insertOne(user)
+                    .then(result => {
+                        if (result.insertedCount > 0) {
+                            res.send(result.ops[0])
+                        }
+                    })
+            }
+        })
+
     })
 
     //  services Section //
@@ -82,6 +106,11 @@ client.connect(err => {
         });
     });
 
+    app.get("/getOrders", (req, res) => {
+        orderCollection.find({}).toArray((err, documents) => {
+            res.send(documents);
+        });
+    });
     //  reviews section //
 
     const reviewsCollection = client.db("tech-soldiers").collection("reviews");
@@ -103,8 +132,7 @@ client.connect(err => {
     app.post("/addSingleReview", (req, res) => {
         const NewReview = req.body;
         reviewsCollection.insertOne(NewReview).then(result => {
-            res.send(result);
-            console.log(result.insertedCount);
+            res.send(result.ops[0]);
         });
     });
 
