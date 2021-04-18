@@ -25,7 +25,6 @@ const client = new MongoClient(uri, {
 client.connect(err => {
 
     console.log("Error is:", err)
-
     console.log("Database connected Successfully")
 
     // admin 
