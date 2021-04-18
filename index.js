@@ -42,7 +42,6 @@ client.connect(err => {
 
     const usersCollection = client.db("tech-soldiers").collection("users");
 
-
     app.get('/allusers', (req, res) => {
         usersCollection.find().toArray((err, items) => {
             res.send([...items]);
@@ -92,11 +91,10 @@ client.connect(err => {
                     })
             }
         })
-
     })
 
-
     //  services Section //
+
     const servicesCollection = client.db("tech-soldiers").collection("services");
 
     app.get('/services', (req, res) => {
@@ -123,6 +121,7 @@ client.connect(err => {
     })
 
     // Delete Services
+
     app.get('/deleteService/:id', async (req, res) => {
         const id = new ObjectId(req.params.id);
         console.log(id)
@@ -132,6 +131,7 @@ client.connect(err => {
             res.send({ message: 'Delete Successfully' })
         }
     })
+
     // Order Section    //
 
     const orderCollection = client.db("tech-soldiers").collection("order");
@@ -154,8 +154,6 @@ client.connect(err => {
         });
     });
 
-
-    // 
     app.get("/orderByEmail/:email", (req, res) => {
         const email = req.params.email
         orderCollection.find({ email: email }).toArray((err, documents) => {
@@ -176,7 +174,6 @@ client.connect(err => {
             res.send(err)
         }
     });
-
 
     //  reviews section //
 
